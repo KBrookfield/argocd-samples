@@ -1,0 +1,35 @@
+apiVersion: cluster.x-k8s.io/v1beta1
+kind: Cluster
+metadata:
+  name: vks-01
+  namespace: namespace-1
+spec:
+  clusterNetwork:
+    pods:
+      cidrBlocks:
+        - 192.168.156.0/20
+    services:
+      cidrBlocks:
+        - 10.96.0.0/12
+    serviceDomain: cluster.local
+  topology:
+    class: builtin-generic-v3.3.0
+    version: v1.32.0---vmware.6-fips-vkr.2
+    variables:
+      - name: vmClass
+        value: guaranteed-xsmall
+      - name: storageClass
+        value: vi1-paris-cl01-vsan-storage-policy
+    controlPlane:
+      replicas: 1
+      metadata:
+        annotations:
+          run.tanzu.vmware.com/resolve-os-image: os-name=photon, content-library=cl-d942ddee581050239
+    workers:
+      machineDeployments:
+        - class: node-pool
+          name: vks-01-np-ek2l
+          replicas: 1
+          metadata:
+            annotations:
+              run.tanzu.vmware.com/resolve-os-image: os-name=photon, content-library=cl-d942ddee581050239
